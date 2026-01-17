@@ -1,12 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -19,7 +12,7 @@ model UserType {
   type      String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  users User[]
+  users     User[]
 }
 
 model User {
@@ -28,34 +21,36 @@ model User {
   firstName String
   lastName  String
   password  String
-  roleId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
+  roleId    String
+  Talent    Talent[]
   userType  UserType @relation(fields: [roleId], references: [id])
 
   @@index([roleId])
 }
 
-
 model Talent {
-  id        String   @id @default(uuid())
-  type      String
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  bookings Booking[]
+  id        String    @id @default(uuid())
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  talent    String
+  userId    String
+  bookings  Booking[]
+  User      User      @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 model Booking {
-  id         String   @id @default(uuid())
-  talentId   String
-  start      DateTime
-  end        DateTime
-  status     String   @default("confirmed")
-  createdAt  DateTime @default(now())
-
-  talent Talent @relation(fields: [talentId], references: [id])
+  id        String   @id @default(uuid())
+  talentId  String
+  start     DateTime
+  end       DateTime
+  status    String   @default("confirmed")
+  createdAt DateTime @default(now())
+  talent    Talent   @relation(fields: [talentId], references: [id])
 
   @@index([talentId, start, end])
 }
