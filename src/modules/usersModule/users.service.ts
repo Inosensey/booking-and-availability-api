@@ -123,7 +123,7 @@ export class UserService {
     }
 
     // Create JWT token
-    const token = this.generateJwtToken(user.id, user.roleId);
+    const token = this.generateJwtToken(user.id, user.userType.type);
 
     return {
       token,
@@ -156,7 +156,7 @@ export class UserService {
     });
   }
 
-  private generateJwtToken(userId: string, roleId: string): string {
+  private generateJwtToken(userId: string, roleType: string): string {
     if (!process.env.JWT_SECRET) {
       throw new Error('JWT_SECRET is not defined in environment variables');
     }
@@ -164,7 +164,7 @@ export class UserService {
     return jwt.sign(
       {
         userId,
-        roleId,
+        roleType,
       },
       process.env.JWT_SECRET,
       { expiresIn: '1d' },
