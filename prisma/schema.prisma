@@ -24,6 +24,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   roleId    String
+  Booking   Booking[]
   Talent    Talent[]
   userType  UserType @relation(fields: [roleId], references: [id])
 
@@ -46,11 +47,13 @@ model Talent {
 model Booking {
   id        String   @id @default(uuid())
   talentId  String
+  userId    String
   start     DateTime
   end       DateTime
   status    String   @default("confirmed")
   createdAt DateTime @default(now())
   talent    Talent   @relation(fields: [talentId], references: [id])
+  User      User      @relation(fields: [userId], references: [id])
 
-  @@index([talentId, start, end])
+  @@index([userId, talentId, start, end])
 }
