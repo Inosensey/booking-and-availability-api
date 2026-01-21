@@ -36,8 +36,10 @@ export type TalentSelectedPayload = Prisma.TalentGetPayload<{
 
 export type BookingSelectedPayload = Prisma.BookingGetPayload<{
   select: {
+    id: true;
     start: true;
     end: true;
+    talentId: true;
     talent: {
       select: {
         talent: true;
