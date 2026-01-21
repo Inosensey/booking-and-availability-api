@@ -42,17 +42,20 @@ export class PermissionsGuard implements CanActivate {
     // User module permissions
     users: {
       admin: ['CREATE', 'READ', 'UPDATE', 'DELETE', 'MANAGE_ROLES'],
-      user: ['READ', 'UPDATE', 'DELETE'],
+      customer: ['READ', 'UPDATE', 'DELETE'],
+      talent: ['READ', 'UPDATE', 'DELETE'],
     },
     // Talents module permissions
     talents: {
       admin: ['CREATE', 'READ', 'UPDATE', 'DELETE', 'MANAGE_ROLES'],
-      user: ['CREATE', 'READ', 'UPDATE', 'DELETE'],
+      customer: ['READ'],
+      talent: ['CREATE', 'READ', 'UPDATE'],
     },
     // Bookings module permissions
     bookings: {
       admin: ['CREATE', 'READ', 'UPDATE', 'DELETE', 'MANAGE_ROLES'],
-      user: ['CREATE', 'READ', 'UPDATE', 'DELETE'],
+      customer: ['CREATE', 'READ'],
+      talent: ['READ', 'UPDATE'],
     },
     // Default/fallback permissions
     default: {
