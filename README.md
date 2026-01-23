@@ -8,6 +8,23 @@
 
 This is a **NestJS-based backend API** for managing talents, bookings, users, and roles. It provides a structured, scalable foundation with features like JWT authentication, role-based permissions, cookie-based sessions, and comprehensive CRUD operations.
 
+## Table of Contents
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture Overview](#architecture-overview)
+  - [Key Components](#key-components)
+  - [Directory Structure](#directory-structure)
+- [Project setup](#project-setup)
+- [Run tests](#run-tests)
+- [API Documentation](#api-documentation)
+  - [User Management](#user-management)
+  - [Roles Management](#roles-management)
+  - [Talents Management](#talents-management)
+  - [Bookings Management](#bookings-management)
+- [Error Responses](#error-responses)
+- [Notes](#notes)
+- [License](#license)
+
 ## Features
 - User authentication with JWT & HTTP-only cookies
 - Role-based access control (RBAC)
@@ -151,7 +168,7 @@ $ npm run test:cov
 
 ## Base URL
 ```
-http://localhost:3000/api
+https://booking-and-availability-api.onrender.com/
 ```
 *Replace with your actual deployment URL*
 
