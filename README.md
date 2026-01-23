@@ -87,25 +87,32 @@ flowchart TD
 
 ### Directory Structure
 
-src/
-├── controllers/ # API endpoints
-│ ├── user.controller.ts
-│ ├── usertype.controller.ts
-│ ├── talent.controller.ts
-│ └── bookings.controller.ts
-├── guards/ # Route protection
-│ ├── auth.guard.ts
-│ └── permissions.guard.ts
-├── interceptors/ # Request/response middleware
-│ └── cookie-check.interceptor.ts
-├── filters/ # Error handling
-│ ├── http-exception.filter.ts
-│ └── prisma-exception.filter.ts
-├── services/ # Business logic
-├── dto/ # Data transfer objects
-├── prisma/ # Database schema
-│ └── schema.prisma
-└── main.ts # Application entry point
+```mermaid
+graph TD
+    A[src/] --> B[controllers/]
+    A --> C[guards/]
+    A --> D[interceptors/]
+    A --> E[filters/]
+    A --> F[services/]
+    A --> G[dto/]
+    A --> H[prisma/]
+    A --> I[main.ts]
+    
+    B --> B1[user.controller.ts]
+    B --> B2[usertype.controller.ts]
+    B --> B3[talent.controller.ts]
+    B --> B4[bookings.controller.ts]
+    
+    C --> C1[auth.guard.ts]
+    C --> C2[permissions.guard.ts]
+    
+    D --> D1[cookie-check.interceptor.ts]
+    
+    E --> E1[http-exception.filter.ts]
+    E --> E2[prisma-exception.filter.ts]
+    
+    H --> H1[schema.prisma]
+```
 
 
 ## Project setup
