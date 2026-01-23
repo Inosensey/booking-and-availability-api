@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model UserType {
+  id        String   @id @default(uuid())
+  type      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     User[]
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  firstName String
+  lastName  String
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  roleId    String
+  Booking   Booking[]
+  Talent    Talent[]
+  userType  UserType @relation(fields: [roleId], references: [id])
+
+  @@index([roleId])
+}
+
+model Talent {
+  id        String    @id @default(uuid())
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  talent    String
+  userId    String
+  bookings  Booking[]
+  User      User      @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Booking {
+  id        String   @id @default(uuid())
+  talentId  String
+  userId    String
+  start     DateTime
+  end       DateTime
+  status    String   @default("confirmed")
+  createdAt DateTime @default(now())
+  talent    Talent   @relation(fields: [talentId], references: [id])
+  User      User      @relation(fields: [userId], references: [id])
+
+  @@index([userId, talentId, start, end])
+}
