@@ -1,4 +1,4 @@
-name: Push to main changes - Deploy
+name: Database Migrations & Build
 
 on:
   push:
@@ -6,28 +6,31 @@ on:
       - main
 
 jobs:
-  deploy:
+  migrate-and-build:
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/sup-node@v4
         with:
-          node-version: 20
+          node-version: '20'
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Prisma migrate deploy
+      - name: Generate Prisma Client
+        run: npx prisma generate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Apply Database Migrations
         run: npx prisma migrate deploy
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
-      - name: Build
+      - name: Build Project
         run: npm run build
-
-      # - name: Start / Deploy
-      #   run: echo "Deploy to server / platform here"
