@@ -2,28 +2,111 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# Talent & Booking Management API
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This is a **NestJS-based backend API** for managing talents, bookings, users, and roles. It provides a structured, scalable foundation with features like JWT authentication, role-based permissions, cookie-based sessions, and comprehensive CRUD operations.
+
+## Features
+- User authentication with JWT & HTTP-only cookies
+- Role-based access control (RBAC)
+- Talent discovery and management
+- Booking and scheduling system
+- Search and filtering capabilities
+- RESTful API with consistent response format
+
+## Tech Stack
+- **Backend:** NestJS
+- **Authentication:** JWT, bcrypt
+- **Validation:** class-validator, class-transformer
+- **API Design:** RESTful principles
+
+## Architecture Overview
+
+```mermaid
+flowchart TD
+    A[HTTP Request] --> B[Exception Filters]
+    B --> C[Guards Layer]
+    C --> D[Interceptors Layer]
+    D --> E[Controllers Layer]
+    E --> F[Services Layer]
+    F --> G[Prisma ORM]
+    G --> H[PostgreSQL]
+    
+    subgraph B [Exception Filters]
+        B1[HttpExceptionFilter]
+        B2[PrismaExceptionFilter]
+    end
+    
+    subgraph C [Guards]
+        C1[AuthGuard]
+        C2[PermissionsGuard]
+    end
+    
+    subgraph D [Interceptors]
+        D1[CookieCheckInterceptor]
+    end
+    
+    subgraph E [Controllers]
+        E1[UserController<br/>/api/users/*]
+        E2[UserTypeController<br/>/api/roles/*]
+        E3[TalentController<br/>/api/talents/*]
+        E4[BookingsController<br/>/api/bookings/*]
+    end
+```
+
+
+### Key Components
+
+#### 1. Guards
+- **AuthGuard**: Validates JWT tokens from cookies, attaches user to request
+- **PermissionsGuard**: Implements RBAC with configurable permission structures
+  - Maps HTTP methods to CRUD operations
+  - Resource-based permission checking
+  - Extensible permission matrix
+
+#### 2. Interceptors
+- **CookieCheckInterceptor**: Monitors and logs cookie operations for debugging
+  - Logs cookie setting operations
+  - Provides visibility into authentication flow
+
+#### 3. Exception Filters
+- **HttpExceptionFilter**: Standardizes HTTP error responses
+  - Consistent error format: `{ success: false, message, error }`
+  - Proper status code mapping
+- **PrismaExceptionFilter**: Handles database-specific errors
+  - `P2002` → 409 Conflict (unique constraint)
+  - `P2025` → 404 Not Found (record not found)
+  - Other → 500 Internal Server Error
+
+#### 4. Database Layer
+- **Prisma ORM**: Type-safe database access
+- **Migrations**: Managed via Prisma CLI
+- **Database**: PostgreSQL with proper relations
+
+### Directory Structure
+
+src/
+├── controllers/ # API endpoints
+│ ├── user.controller.ts
+│ ├── usertype.controller.ts
+│ ├── talent.controller.ts
+│ └── bookings.controller.ts
+├── guards/ # Route protection
+│ ├── auth.guard.ts
+│ └── permissions.guard.ts
+├── interceptors/ # Request/response middleware
+│ └── cookie-check.interceptor.ts
+├── filters/ # Error handling
+│ ├── http-exception.filter.ts
+│ └── prisma-exception.filter.ts
+├── services/ # Business logic
+├── dto/ # Data transfer objects
+├── prisma/ # Database schema
+│ └── schema.prisma
+└── main.ts # Application entry point
+
 
 ## Project setup
 
@@ -57,41 +140,630 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Deployment
+# API Documentation
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## Base URL
+```
+http://localhost:3000/api
+```
+*Replace with your actual deployment URL*
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Authentication
+Most endpoints require authentication using JWT tokens. Include the token in cookies or Authorization header.
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+## Response Format
+All endpoints return a consistent response format:
+```json
+{
+  "success": true,
+  "data": {},
+  "message": "Success message"
+}
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## User Management
 
-Check out a few resources that may come in handy when working with NestJS:
+### Authentication Endpoints
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+#### Sign Up
+```http
+POST /api/users/auth/sign-up
+```
+**Description:** Register a new user
 
-## Support
+**Body:**
+```json
+{
+  "email": "string",
+  "password": "string",
+  "name": "string",
+  "roleId": "string"
+}
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+**Response:**
+```json
+{
+  "success": true,
+  "data": { "userId": "string", "email": "string" },
+  "message": "User created successfully"
+}
+```
 
-## Stay in touch
+#### Sign In
+```http
+POST /api/users/auth/sign-in
+```
+**Description:** Authenticate user and set session cookie
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+**Body:**
+```json
+{
+  "email": "string",
+  "password": "string"
+}
+```
+
+**Response:** Sets `token` cookie and returns:
+```json
+{
+  "success": true,
+  "data": {
+    "userId": "string",
+    "roleType": "string"
+  },
+  "message": "User signed in successfully"
+}
+```
+
+#### Sign Out
+```http
+POST /api/users/auth/sign-out
+```
+**Description:** Clear authentication cookie
+
+**Headers:** Requires authentication
+
+**Response:** Clears `token` cookie
+
+---
+
+### User Management Endpoints
+
+#### Get All Users
+```http
+GET /api/users
+```
+**Headers:** Requires authentication and permissions
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "string",
+      "email": "string",
+      "name": "string",
+      "role": "string"
+    }
+  ],
+  "message": "Users retrieved successfully"
+}
+```
+
+#### Get User by ID
+```http
+GET /api/users/:id
+```
+**Headers:** Requires authentication and permissions
+
+**Parameters:**
+- `id` (path): User ID
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "string",
+    "email": "string",
+    "name": "string",
+    "role": "string"
+  },
+  "message": "User retrieved successfully"
+}
+```
+
+#### Update User
+```http
+PUT /api/users/update/:userId
+```
+**Headers:** Requires authentication and permissions
+
+**Parameters:**
+- `userId` (path): User ID to update
+
+**Body:**
+```json
+{
+  "name": "string",
+  "email": "string"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": { "updated": true },
+  "message": "User updated successfully"
+}
+```
+
+#### Delete User
+```http
+DELETE /api/users/delete/:userId
+```
+**Headers:** Requires authentication and permissions
+
+**Parameters:**
+- `userId` (path): User ID to delete
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": { "deleted": true },
+  "message": "User deleted successfully"
+}
+```
+
+---
+
+## Roles Management
+
+### Role Endpoints
+
+#### Get All Roles
+```http
+GET /api/roles
+```
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "string",
+      "name": "string",
+      "permissions": ["string"]
+    }
+  ],
+  "message": "Users Roles retrieved successfully"
+}
+```
+
+#### Get Role by ID
+```http
+GET /api/roles/:id
+```
+**Parameters:**
+- `id` (path): Role ID
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "string",
+    "name": "string",
+    "permissions": ["string"]
+  },
+  "message": "User Role retrieved successfully"
+}
+```
+
+#### Create Role
+```http
+POST /api/roles/create
+```
+**Body:**
+```json
+{
+  "name": "string",
+  "permissions": ["string"]
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": { "id": "string", "name": "string" },
+  "message": "User Role created successfully"
+}
+```
+
+#### Update Role
+```http
+PUT /api/roles/update/:id
+```
+**Parameters:**
+- `id` (path): Role ID to update
+
+**Body:**
+```json
+{
+  "name": "string",
+  "permissions": ["string"]
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": { "updated": true },
+  "message": "User Role updated successfully"
+}
+```
+
+#### Delete Role
+```http
+DELETE /api/roles/delete/:id
+```
+**Parameters:**
+- `id` (path): Role ID to delete
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": { "deleted": true },
+  "message": "User Role deleted successfully"
+}
+```
+
+---
+
+## Talents Management
+
+### Talent Endpoints
+
+#### Get All Talents
+```http
+GET /api/talents
+```
+**Headers:** Requires authentication and permissions
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "string",
+      "name": "string",
+      "talent": "string",
+      "skills": ["string"],
+      "rate": "number"
+    }
+  ],
+  "message": "Talents retrieved Successfully"
+}
+```
+
+#### Get Talents by Talent Type
+```http
+GET /api/talents/:talent
+```
+**Headers:** Requires authentication and permissions
+
+**Parameters:**
+- `talent` (path): Talent category/type
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "string",
+      "name": "string",
+      "talent": "string",
+      "skills": ["string"]
+    }
+  ],
+  "message": "Talents retrieved Successfully"
+}
+```
+
+#### Search Talents
+```http
+GET /api/talents/search/:value
+```
+**Headers:** Requires authentication and permissions
+
+**Parameters:**
+- `value` (path): Search term
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "string",
+      "name": "string",
+      "talent": "string",
+      "skills": ["string"]
+    }
+  ],
+  "message": "Talents retrieved Successfully"
+}
+```
+
+#### Create Talent
+```http
+POST /api/talents/create
+```
+**Headers:** Requires authentication and permissions
+
+**Body:**
+```json
+{
+  "name": "string",
+  "talent": "string",
+  "skills": ["string"],
+  "rate": "number",
+  "userId": "string"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": { "id": "string", "name": "string" },
+  "message": "Talent created successfully"
+}
+```
+
+#### Update Talent
+```http
+PUT /api/talents/update/:userId/:id
+```
+**Headers:** Requires authentication and permissions
+
+**Parameters:**
+- `userId` (path): User ID
+- `id` (path): Talent ID
+
+**Body:**
+```json
+{
+  "name": "string",
+  "talent": "string",
+  "skills": ["string"],
+  "rate": "number"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": { "updated": true },
+  "message": "Talent updated successfully"
+}
+```
+
+#### Delete Talent
+```http
+DELETE /api/talents/delete/:id
+```
+**Headers:** Requires authentication and permissions
+
+**Parameters:**
+- `id` (path): Talent ID to delete
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": { "deleted": true },
+  "message": "Talent deleted successfully"
+}
+```
+
+---
+
+## Bookings Management
+
+### Booking Endpoints
+
+#### Get Talent Bookings
+```http
+GET /api/bookings/:talentId
+```
+**Headers:** Requires authentication and permissions
+
+**Parameters:**
+- `talentId` (path): Talent ID
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "string",
+      "talentId": "string",
+      "clientId": "string",
+      "date": "string",
+      "time": "string",
+      "status": "pending|accepted|rejected|cancelled"
+    }
+  ],
+  "message": "Bookings retrieved successfully"
+}
+```
+
+#### Get Booking by ID
+```http
+GET /api/bookings/id
+```
+**Headers:** Requires authentication and permissions
+
+**Parameters:**
+- `id` (path): Booking ID
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "string",
+    "talentId": "string",
+    "clientId": "string",
+    "date": "string",
+    "time": "string",
+    "status": "string"
+  },
+  "message": "Bookings retrieved successfully"
+}
+```
+
+#### Request Booking
+```http
+POST /api/bookings/request
+```
+**Headers:** Requires authentication and permissions
+
+**Body:**
+```json
+{
+  "talentId": "string",
+  "clientId": "string",
+  "date": "string",
+  "time": "string",
+  "duration": "number",
+  "notes": "string"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": { "bookingId": "string", "status": "pending" },
+  "message": "Booking created successfully"
+}
+```
+
+#### Update Booking Status
+```http
+PUT /api/bookings/update/:id
+```
+**Headers:** Requires authentication and permissions
+
+**Parameters:**
+- `id` (path): Booking ID
+
+**Body:**
+```json
+{
+  "action": "accept|reject"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": { "status": "accepted|rejected" },
+  "message": "Booking accepted/rejected successfully"
+}
+```
+
+#### Reschedule Booking
+```http
+PUT /api/bookings/reschedule/:id
+```
+**Headers:** Requires authentication and permissions
+
+**Parameters:**
+- `id` (path): Booking ID
+
+**Body:**
+```json
+{
+  "date": "string",
+  "time": "string"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": { "rescheduled": true },
+  "message": "Booking rescheduled successfully"
+}
+```
+
+#### Cancel Booking
+```http
+PUT /api/bookings/cancel/:id
+```
+**Headers:** Requires authentication and permissions
+
+**Parameters:**
+- `id` (path): Booking ID
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": { "cancelled": true },
+  "message": "Booking canceled successfully"
+}
+```
+
+---
+
+## Error Responses
+
+### Common Error Codes:
+- `400` - Bad Request (Invalid input)
+- `401` - Unauthorized (Missing/invalid authentication)
+- `403` - Forbidden (Insufficient permissions)
+- `404` - Not Found (Resource doesn't exist)
+- `500` - Internal Server Error
+
+### Error Response Format:
+```json
+{
+  "success": false,
+  "message": "Error description",
+  "error": "Error details (optional)"
+}
+```
+
+---
+
+## Notes
+1. All timestamps are in ISO 8601 format
+2. IDs are UUID strings
+3. Authentication is required for most endpoints (except sign-up, sign-in)
+4. Some endpoints require specific user permissions
+5. Date formats should be YYYY-MM-DD
+6. Time formats should be HH:MM (24-hour format)
+
+---
 
 ## License
 
