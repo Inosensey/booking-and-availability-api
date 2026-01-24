@@ -28,6 +28,7 @@ import { UserService } from './users.service';
 
 // Types
 import { CreateUserDTO, UpdateUserDto, UserCredentialsDTO } from './user.dto';
+import { AlreadyAuthGuard } from 'src/guards/alreadyAuth.guard';
 
 @Controller('users')
 export class UserController {
@@ -66,6 +67,7 @@ export class UserController {
     return ApiResponse.success(result, 'User created successfully');
   }
 
+  @UseGuards(AlreadyAuthGuard)
   @Post('auth/sign-in')
   @HttpCode(200)
   @UseInterceptors(CookieCheckInterceptor)
